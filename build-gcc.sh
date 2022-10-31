@@ -56,7 +56,7 @@ cd ${BUILD_DIR}/${DIR}
                                 --host=${HOST_MACH}                 \
                                 --target=${TARGET}                  \
                                 --program-prefix=${PROGRAM_PREFIX}  \
-                                --enable-languages=c                \
+                                --enable-languages=c,c++            \
                                 --enable-obsolete                   \
                                 --enable-lto                        \
                                 --disable-threads                   \
