@@ -9,10 +9,10 @@
 #Email         	:   kentosama@genku.net                                          
 ##################################################################
 
-VERSION="6.3.0"
-ARCHIVE="gcc-${VERSION}.tar.bz2"
+VERSION="12.2.0"
+ARCHIVE="gcc-${VERSION}.tar.gz"
 URL="https://gcc.gnu.org/pub/gcc/releases/gcc-${VERSION}/${ARCHIVE}"
-SHA512SUM="234dd9b1bdc9a9c6e352216a7ef4ccadc6c07f156006a59759c5e0e6a69f0abcdc14630eff11e3826dd6ba5933a8faa43043f3d1d62df6bd5ab1e82862f9bf78"
+SHA512SUM="36ab2267540f205b148037763b3806558e796d564ca7831799c88abcf03393c6dc2cdc9d53e8f094f6dc1245e47a406e1782604eb9d119410d406032f59c1544"
 DIR="gcc-${VERSION}"
 
 # Check if user is root
@@ -37,13 +37,7 @@ if ! [ -d "${SRC_DIR}/${DIR}" ]; then
         echo "SHA512SUM verification of ${ARCHIVE} failed!"
         exit
     else
-        tar jxvf ${ARCHIVE} -C ${SRC_DIR}
-
-        # Apply patch for ubsan.c at 1474: 
-        # || xloc.file == '\0' || xloc.file[0] == '\xff' to
-        # || xloc.file[0] == '\0' || xloc.file[0] == '\xff'
-        patch -t ${SRC_DIR}/${DIR}/gcc/ubsan.c < ${ROOT_DIR}/patch/ubsan-fix-check-empty-string.patch
-
+        tar xvf ${ARCHIVE} -C ${SRC_DIR}
     fi
 fi
 
