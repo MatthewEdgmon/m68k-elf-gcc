@@ -15,13 +15,13 @@ $ sudo pacman -S base-devel
 **Debian**
 ```bash
 $ sudo apt update
-$ sudo apt install build-essential textinfo
+$ sudo apt install build-essential texinfo
 ```
 
 **Ubuntu**
 ```bash
 $ sudo apt update
-$ sudo apt install build-essential textinfo
+$ sudo apt install build-essential texinfo
 ```
 
 **Fedora**
