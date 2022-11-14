@@ -13,6 +13,7 @@ BUILD_BINUTILS="yes"
 BUILD_GCC_STAGE_1="yes"
 BUILD_GCC_STAGE_2="no"
 BUILD_NEWLIB="no"
+BUILD_PICOLIBC="no"
 CPU="m68000"
 PREFIX="m68k-elf-"
 
@@ -30,10 +31,14 @@ for arg do
         BUILD_NEWLIB="yes"
         BUILD_GCC_STAGE_2="yes"
         export WITH_NEWLIB="--with-newlib"
+	elif [[ "$arg" == "--with-picolibc" ]]; then
+        BUILD_PICOLIBC="yes"
+        BUILD_GCC_STAGE_2="yes"
+        export WITH_PICOLIBC="--with-picolibc"
     elif [[ "$arg" == "--with-cpu=" ]]; then
         CPU = ${i}
     elif [[ "$arg" == "--program-prefix=" ]]; then
-        PREFIXF = ${i}
+        PREFIX = ${i}
     fi
 
     i=$((i + 1))
@@ -80,21 +85,30 @@ if [ ${BUILD_GCC_STAGE_1} == "yes" ]; then
 fi
 
 # Build newlib
-if [ ${BUILD_NEWLIB} == "yes" ]; then
-    ./build-newlib.sh
-    if [ $? -ne 0 ]; then
-        "Failed to build newlib, please check build.log"
-        exit
-    else
-        # Build GCC stage 2 (with newlib)
-        if [ ${BUILD_GCC_STAGE_2} == "yes" ]; then
-            ./build-gcc.sh
-            if [ $? -ne 0 ]; then
-                "Failed to build gcc stage 2, please check build.log"
-                exit
-            fi
+if [ ${BUILD_NEWLIB} == "yes" ] || [ ${BUILD_PICOLIBC} == "yes" ]; then
+	if [ ${BUILD_NEWLIB} == "yes" ]; then
+		./build-newlib.sh
+		if [ $? -ne 0 ]; then
+			"Failed to build newlib, please check build.log"
+			exit
+		fi
+	fi
+	if [${BUILD_PICOLIBC} == "yes" ]; then
+		./build-picolib.sh
+		if [ $? -ne 0 ]; then
+			"Failed to build newlib, please check build.log"
+			exit
+		fi
+	fi
+    # Build GCC stage 2 (with newlib)
+    if [ ${BUILD_GCC_STAGE_2} == "yes" ]; then
+        ./build-gcc.sh
+        if [ $? -ne 0 ]; then
+            "Failed to build gcc stage 2, please check build.log"
+            exit
         fi
     fi
 fi
 
 echo "${TARGET} toolchain build has finished"
+

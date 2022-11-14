@@ -62,6 +62,50 @@ For change the program prefix, use `--program-prefix` argument:
 $ ./build-toolchain.sh --program-prefix=sega-genesis-
 ```
 
+By default the script currently builds
+
+binutils 	2.39
+gcc			12.2.0
+newlib		4.2.0.20211231
+picolibc 	1.7.9
+
+For building the toolchain with different versions of newlib, picolibc, gcc and binutils specify e.g.:
+
+```bash
+$ BINUTILS_VERSION=2.25.1  GCC_VERSION=5.2.0 NEWLIB_VERSION=2.2.0.20151023 PICOLIBC_VERSION=1.7.9 ./build-toolchain.sh --with-newlib --with-picolibc --with-cpu=68000,68060
+```
+
+For the SHA checksum verification not to fail you also need to specify the binarys SHA sums with
+
+BINUTILS_SHA512SUM, GCC_SHA512SUM, NEWLIB_SHA256SUM and PICOLIBC_SHA256SUM,
+
+or specify to ignore the checksums with CHECKSUM_IGNORE=TRUE
+
+```bash
+$ BINUTILS_VERSION=2.25.1  GCC_VERSION=5.2.0 NEWLIB_VERSION=2.2.0.20151023 PICOLIBC_VERSION=1.7.9 CHECKSUM_IGNORE=TRUE ./build-toolchain.sh --with-newlib --with-picolibc --with-cpu=68000,68060
+```
+
+Pathes to be applied to binutils, gcc, newlib or picolibc an be specified with
+
+BINUTILS_APPLY_PATCH, GCC_APPLY_PATCH, NEWLIB_APPLY_PATCH and PICOLIBC_PATCH
+
+The patch specified here is searched for in the patch subdirectory.
+
+E.g. to build gcc 5.2.0 with a gcc 6.3.0 the patch to apply is gcc5.2.0_libc_name_p.patch.
+Building gcc 5.2.0 with gcc 12.2.0 still fails and needs more patches.
+
+```bash
+$ BINUTILS_VERSION=2.25.1  GCC_VERSION=5.2.0 GCC_APPLY_PATCH=gcc5.2.0_libc_name_p.patch NEWLIB_VERSION=2.2.0.20151023 CHECKSUM_IGNORE=TRUE ./build-toolchain.sh --with-newlib --with-cpu=68000,68060
+```
+
+The version of this script originally forked from https://github.com/kentosama/m68k-elf-gcc which build gcc 6.3.0 can be run with:
+
+```bash
+$ BINUTILS_VERSION=2.34 GCC_VERSION=6.3.0 GCC_APPLY_PATCH=ubsan-fix-check-empty-string.patch NEWLIB_VERSION=3.3.0 CHECKSUM_IGNORE=TRUE ./build-toolchain.sh --with-newlib --with-cpu=68000,68060
+```
+
+The file target_versions.txt lists versions of utils and patches which have been successfully tested.
+
 ## Install
 
 Once the Motorola 68000 toolchain was successful built, you can process to the installation. Move or copy the "m68k-toolchain" folder in "/opt" or "/usr/local":

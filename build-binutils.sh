@@ -9,11 +9,11 @@
 #Email         	:   kentosama@genku.net                                          
 ###################################################################
 
-VERSION="2.39"
-ARCHIVE="binutils-${VERSION}.tar.bz2"
-URL="https://ftp.gnu.org/gnu/binutils/${ARCHIVE}"
-SHA512SUM="faa592dd48fc715901ad704ac96dbd34b1792c51e77c7a92a387964b0700703c74be07de45cc4751945c8c0674368c73dc17bbc563d1d2cd235b5ebd8c6e7efb"
-DIR="binutils-${VERSION}"
+BINUTILS_VERSION=${BINUTILS_VERSION:-"2.39"}
+BINUTILS_ARCHIVE="binutils-${BINUTILS_VERSION}.tar.bz2"
+BINUTILS_URL="https://ftp.gnu.org/gnu/binutils/${BINUTILS_ARCHIVE}"
+BINUTILS_SHA512SUM=${BINUTILS_SHA512SUM:-"faa592dd48fc715901ad704ac96dbd34b1792c51e77c7a92a387964b0700703c74be07de45cc4751945c8c0674368c73dc17bbc563d1d2cd235b5ebd8c6e7efb"}
+BINUTILS_DIR="binutils-${BINUTILS_VERSION}"
 
 # Check if user is root
 if [ ${EUID} == 0 ]; then
@@ -21,27 +21,37 @@ if [ ${EUID} == 0 ]; then
     exit 1
 fi
 
+echo "BUILDING: ${BINUTILS_VERSION}"
+
 # Create build folder
-mkdir -p ${BUILD_DIR}/${DIR}
+mkdir -p ${BUILD_DIR}/${BINUTILS_DIR}
 
 cd ${DOWNLOAD_DIR}
 
 # Download binutils if is needed
-if ! [ -f "${ARCHIVE}" ]; then
-    wget ${URL}
+if ! [ -f "${BINUTILS_ARCHIVE}" ]; then
+    wget ${BINUTILS_URL}
 fi
 
 # Extract binutils archive if is needed
-if ! [ -d "${SRC_DIR}/${DIR}" ]; then
-    if [ $(sha512sum ${ARCHIVE} | awk '{print $1}') != ${SHA512SUM} ]; then
-        echo "SHA512SUM verification of ${ARCHIVE} failed!"
-        exit
+if ! [ -d "${SRC_DIR}/${BINUTILS_DIR}" ]; then
+    if [ $(sha512sum ${BINUTILS_ARCHIVE} | awk '{print $1}') != ${BINUTILS_SHA512SUM} ] && ![ ${CHECKSUM_IGNORE}]; then
+        echo "SHA512SUM verification of ${BINUTILS_ARCHIVE} failed!"
+        exit 1
     else
-        tar jxvf ${ARCHIVE} -C ${SRC_DIR}
+        tar jxvf ${BINUTILS_ARCHIVE} -C ${SRC_DIR}
+		if [ -v BINUTILS_APPLY_PATCH ] && [ -f ${ROOT_DIR}/patch/${BINUTILS_APPLY_PATCH} ]; then
+		    echo "Applying patch ${BINUTILS_APPLY_PATCH}"
+			patch -t --forward -p0 -d ${SRC_DIR}/${BINUTILS_DIR}/ < ${ROOT_DIR}/patch/${BINUTILS_APPLY_PATCH}
+			if [ $? -ne 0 ]; then
+				"Failed to apply patch to binutils, please check build.log"
+				exit 1
+			fi
+		fi
     fi
 fi
 
-cd ${BUILD_DIR}/${DIR}
+cd ${BUILD_DIR}/${BINUTILS_DIR}
 
 # Enable gold for 64bit
 if [ ${ARCH} != "i386" ] && [ ${ARCH} != "i686" ]; then
@@ -49,7 +59,7 @@ if [ ${ARCH} != "i386" ] && [ ${ARCH} != "i686" ]; then
 fi
 
 # Configure before build
-../../source/${DIR}/configure       --prefix=${INSTALL_DIR} \
+../../source/${BINUTILS_DIR}/configure       --prefix=${INSTALL_DIR} \
                                     --build=${BUILD_MACH} \
                                     --host=${HOST_MACH} \
                                     --target=${TARGET} \
