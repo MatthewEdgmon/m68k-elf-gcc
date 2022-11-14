@@ -97,4 +97,4 @@ if [ ${BUILD_NEWLIB} == "yes" ]; then
     fi
 fi
 
-echo "m68k toolchain build was terminated"
+echo "${TARGET} toolchain build has finished"
