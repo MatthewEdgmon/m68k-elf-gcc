@@ -1,11 +1,10 @@
 #!/bin/bash
 
 ###################################################################
-#Script Name	:   build-picolib                                                                                            
-#Description	:   build picolib for the Motorola 68000 toolchain   
-#Date           :   2022-10-31                                                                          
-#Args           :   TODO                                                                                        
-#Author       	:   5inf                                                   
+#Script Name    :   build-picolib
+#Description    :   build picolib for the Motorola 68000 toolchain
+#Date           :   2022-10-31
+#Author         :   5inf
 ###################################################################
 
 PICOLIBC_VERSION=${PICOLIBC_VERSION:-"1.7.9"}

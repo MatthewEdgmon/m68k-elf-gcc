@@ -1,12 +1,10 @@
 #!/bin/bash
 
 ###################################################################
-#Script Name	:   build-toolchain                                                                                            
-#Description	:   build toolchain for the Motorola 68000   
-#Date           :   samedi, 4 avril 2020                                                                          
-#Args           :   Welcome to the next level!                                                                                        
-#Author       	:   Jacques Belosoukinski (kentosama)                                                   
-#Email         	:   kentosama@genku.net                                          
+#Script Name    :   build-toolchain
+#Description    :   build toolchain for the Motorola 68000
+#Date           :   Monday, 14 November 2022
+#Author         :   5inf, Jacques Belosoukinski (kentosama)
 ###################################################################
 
 BUILD_BINUTILS="yes"
@@ -93,7 +91,7 @@ if [ ${BUILD_NEWLIB} == "yes" ] || [ ${BUILD_PICOLIBC} == "yes" ]; then
 			exit
 		fi
 	fi
-	if [${BUILD_PICOLIBC} == "yes" ]; then
+	if [ ${BUILD_PICOLIBC} == "yes" ]; then
 		./build-picolib.sh
 		if [ $? -ne 0 ]; then
 			"Failed to build newlib, please check build.log"

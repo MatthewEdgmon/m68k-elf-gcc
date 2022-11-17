@@ -1,12 +1,10 @@
 #!/bin/bash
 
 ###################################################################
-#Script Name	:   build-gcc                                                                                           
-#Description	:   build gcc for the Motorola 68000 toolchain   
-#Date           :   samedi, 4 avril 2020                                                                          
-#Args           :   Welcome to the next level!                                                                                        
-#Author       	:   Jacques Belosoukinski (kentosama)                                                   
-#Email         	:   kentosama@genku.net                                          
+#Script Name    :   build-gcc
+#Description    :   build gcc for the Motorola 68000 toolchain
+#Date           :   Monday, 11 November 2022
+#Author         :   5inf, Jacques Belosoukinski (kentosama)
 ##################################################################
 
 GCC_VERSION=${GCC_VERSION:-"12.2.0"}

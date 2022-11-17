@@ -1,12 +1,10 @@
 #!/bin/bash
 
 ###################################################################
-#Script Name	:   build-newlib                                                                                            
-#Description	:   build newlib for the Motorola 68000 toolchain   
-#Date           :   samedi, 7 avril 2020                                                                          
-#Args           :   Welcome to the next level!                                                                                        
-#Author       	:   Jacques Belosoukinski (kentosama)                                                   
-#Email         	:   kentosama@genku.net                                          
+#Script Name    :   build-newlib
+#Descriptin     :   build newlib for the Motorola 68000 toolchain
+#Date           :   Monday, 14 November 2022
+#Author         :   5inf, Jacques Belosoukinski (kentosama)
 ###################################################################
 
 NEWLIB_VERSION=${NEWLIB_VERSION:-"4.2.0.20211231"} #set default if not set
@@ -33,8 +31,8 @@ if ! [ -f "${ARCHIVE}" ]; then
 fi
 
 # Extract the newlib archive if is needed
-if ! [ -d "${SRC_DIR}/${DIR}" ]; then
-    if [ $(sha512sum ${ARCHIVE} | awk '{print $1}') != ${NEWLIB_SHA512SUM} ] && ![ ${CHECKSUM_IGNORE} ]; then
+if ! [ -d "${SRC_DIR}/${NEWLIB_DIR}" ]; then
+    if [ $(sha512sum ${NEWLIB_ARCHIVE} | awk '{print $1}') != ${NEWLIB_SHA512SUM} ] && ![ ${CHECKSUM_IGNORE} ]; then
         echo "SHA512SUM verification of ${ARCHIVE} failed!"
         exit 1
     else
