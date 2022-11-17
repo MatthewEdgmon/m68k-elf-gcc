@@ -44,6 +44,9 @@ if ! [ -d "${SRC_DIR}/${GCC_DIR}" ]; then
 				"Failed to apply patch to gcc, please check build.log"
 				exit 1
 			fi
+                elif [ -v GCC_APPLY_PATCH ]; then
+                        echo "patch specified but patch file not found"
+			exit 1
 		fi
     fi
 fi

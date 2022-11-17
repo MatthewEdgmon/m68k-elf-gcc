@@ -1,0 +1,212 @@
+diff -r -u gcc/cp/cfns.gperf gcc/cp/cfns.gperf
+--- gcc/cp/cfns.gperf	2015-01-05 13:33:28.000000000 +0100
++++ gcc/cp/cfns.gperf	2022-11-14 16:08:19.593470900 +0100
+@@ -1,3 +1,5 @@
++%language=C++
++%define class-name libc_name
+ %{
+ /* Copyright (C) 2000-2015 Free Software Foundation, Inc.
+ 
+@@ -16,14 +18,6 @@
+ You should have received a copy of the GNU General Public License
+ along with GCC; see the file COPYING3.  If not see
+ <http://www.gnu.org/licenses/>.  */
+-#ifdef __GNUC__
+-__inline
+-#endif
+-static unsigned int hash (const char *, unsigned int);
+-#ifdef __GNUC__
+-__inline
+-#endif
+-const char * libc_name_p (const char *, unsigned int);
+ %}
+ %%
+ # The standard C library functions, for feeding to gperf; the result is used
+diff -r -u gcc/cp/cfns.h gcc/cp/cfns.h
+--- gcc/cp/cfns.h	2015-01-05 13:33:28.000000000 +0100
++++ gcc/cp/cfns.h	2022-11-14 16:08:19.593470900 +0100
+@@ -1,5 +1,5 @@
+-/* ANSI-C code produced by gperf version 3.0.3 */
+-/* Command-line: gperf -o -C -E -k '1-6,$' -j1 -D -N libc_name_p -L ANSI-C cfns.gperf  */
++/* ANSI-C code produced by gperf version 3.0.4 */
++/* Command-line: gperf -o -C -E -k '1-6,$' -j1 -D -N libc_name_p -L C++ --output-file cfns.h cfns.gperf  */
+ 
+ #if !((' ' == 32) && ('!' == 33) && ('"' == 34) && ('#' == 35) \
+       && ('%' == 37) && ('&' == 38) && ('\'' == 39) && ('(' == 40) \
+@@ -28,7 +28,7 @@
+ #error "gperf generated tables don't work with this execution character set. Please report a bug to <bug-gnu-gperf@gnu.org>."
+ #endif
+ 
+-#line 1 "cfns.gperf"
++#line 3 "cfns.gperf"
+ 
+ /* Copyright (C) 2000-2015 Free Software Foundation, Inc.
+ 
+@@ -47,25 +47,17 @@
+ You should have received a copy of the GNU General Public License
+ along with GCC; see the file COPYING3.  If not see
+ <http://www.gnu.org/licenses/>.  */
+-#ifdef __GNUC__
+-__inline
+-#endif
+-static unsigned int hash (const char *, unsigned int);
+-#ifdef __GNUC__
+-__inline
+-#endif
+-const char * libc_name_p (const char *, unsigned int);
+ /* maximum key range = 391, duplicates = 0 */
+ 
+-#ifdef __GNUC__
+-__inline
+-#else
+-#ifdef __cplusplus
+-inline
+-#endif
+-#endif
+-static unsigned int
+-hash (register const char *str, register unsigned int len)
++class libc_name
++{
++private:
++  static inline unsigned int hash (const char *str, unsigned int len);
++public:
++  static const char *libc_name_p (const char *str, unsigned int len);
++};
++inline unsigned int 
++libc_name::hash (register const char *str, register unsigned int len)
+ {
+   static const unsigned short asso_values[] =
+     {
+@@ -122,14 +114,8 @@
+   return hval + asso_values[(unsigned char)str[len - 1]];
+ }
+ 
+-#ifdef __GNUC__
+-__inline
+-#ifdef __GNUC_STDC_INLINE__
+-__attribute__ ((__gnu_inline__))
+-#endif
+-#endif
+ const char *
+-libc_name_p (register const char *str, register unsigned int len)
++libc_name::libc_name_p (register const char *str, register unsigned int len)
+ {
+   enum
+     {
+diff -r -u gcc/cp/except.c gcc/cp/except.c
+--- gcc/cp/except.c	2015-02-12 16:38:33.000000000 +0100
++++ gcc/cp/except.c	2022-11-14 16:08:19.593470900 +0100
+@@ -1040,7 +1040,7 @@
+      unless the system headers are playing rename tricks, and if
+      they are, we don't want to be confused by them.  */
+   id = DECL_NAME (fn);
+-  return !!libc_name_p (IDENTIFIER_POINTER (id), IDENTIFIER_LENGTH (id));
++  return !!libc_name::libc_name_p (IDENTIFIER_POINTER (id), IDENTIFIER_LENGTH (id));
+ }
+ 
+ /* Returns nonzero if an exception of type FROM will be caught by a
+diff -r -u gcc/cp/Make-lang.in gcc/cp/Make-lang.in
+--- gcc/cp/Make-lang.in	2015-01-15 23:58:42.000000000 +0100
++++ gcc/cp/Make-lang.in	2022-11-14 16:08:19.593470900 +0100
+@@ -111,7 +111,7 @@
+ # deleting the $(srcdir)/cp/cfns.h file.
+ $(srcdir)/cp/cfns.h:
+ endif
+-	gperf -o -C -E -k '1-6,$$' -j1 -D -N 'libc_name_p' -L ANSI-C \
++	gperf -o -C -E -k '1-6,$$' -j1 -D -N 'libc_name_p' -L C++ \
+ 		$(srcdir)/cp/cfns.gperf --output-file $(srcdir)/cp/cfns.h
+ 
+ #
+Only in gcc-5.2.0-patched/gcc/cp: Make-lang.in.orig
+diff -r -u gcc/reload.h gcc/reload.h
+--- gcc/reload.h	2015-01-05 13:33:28.000000000 +0100
++++ gcc/reload.h	2022-11-17 09:10:22.202987900 +0100
+@@ -168,7 +168,7 @@
+      value indicates the level of indirect addressing supported, e.g., two
+      means that (MEM (MEM (REG n))) is also valid if (REG n) does not get
+      a hard register.  */
+-  bool x_spill_indirect_levels;
++  unsigned char x_spill_indirect_levels;
+ 
+   /* True if caller-save has been reinitialized.  */
+   bool x_caller_save_initialized_p;
+diff -r -u gcc/wide-int.h gcc/wide-int.h
+--- gcc/wide-int.h	2015-01-05 13:33:28.000000000 +0100
++++ gcc/wide-int.h	2022-11-17 08:36:16.572987900 +0100
+@@ -365,21 +365,18 @@
+      inputs.  Note that CONST_PRECISION and VAR_PRECISION cannot be
+      mixed, in order to give stronger type checking.  When both inputs
+      are CONST_PRECISION, they must have the same precision.  */
+-  template <>
+   template <typename T1, typename T2>
+   struct binary_traits <T1, T2, FLEXIBLE_PRECISION, FLEXIBLE_PRECISION>
+   {
+     typedef widest_int result_type;
+   };
+ 
+-  template <>
+   template <typename T1, typename T2>
+   struct binary_traits <T1, T2, FLEXIBLE_PRECISION, VAR_PRECISION>
+   {
+     typedef wide_int result_type;
+   };
+ 
+-  template <>
+   template <typename T1, typename T2>
+   struct binary_traits <T1, T2, FLEXIBLE_PRECISION, CONST_PRECISION>
+   {
+@@ -389,14 +386,12 @@
+ 			       <int_traits <T2>::precision> > result_type;
+   };
+ 
+-  template <>
+   template <typename T1, typename T2>
+   struct binary_traits <T1, T2, VAR_PRECISION, FLEXIBLE_PRECISION>
+   {
+     typedef wide_int result_type;
+   };
+ 
+-  template <>
+   template <typename T1, typename T2>
+   struct binary_traits <T1, T2, CONST_PRECISION, FLEXIBLE_PRECISION>
+   {
+@@ -406,7 +401,6 @@
+ 			       <int_traits <T1>::precision> > result_type;
+   };
+ 
+-  template <>
+   template <typename T1, typename T2>
+   struct binary_traits <T1, T2, CONST_PRECISION, CONST_PRECISION>
+   {
+@@ -417,7 +411,6 @@
+ 			       <int_traits <T1>::precision> > result_type;
+   };
+ 
+-  template <>
+   template <typename T1, typename T2>
+   struct binary_traits <T1, T2, VAR_PRECISION, VAR_PRECISION>
+   {
+@@ -881,7 +874,6 @@
+ 
+ namespace wi
+ {
+-  template <>
+   template <typename storage>
+   struct int_traits < generic_wide_int <storage> >
+     : public wi::int_traits <storage>
+@@ -960,7 +952,6 @@
+ 
+ namespace wi
+ {
+-  template <>
+   template <bool SE>
+   struct int_traits <wide_int_ref_storage <SE> >
+   {
+@@ -1147,7 +1138,6 @@
+ 
+ namespace wi
+ {
+-  template <>
+   template <int N>
+   struct int_traits < fixed_wide_int_storage <N> >
+   {

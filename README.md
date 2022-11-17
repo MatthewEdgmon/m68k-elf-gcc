@@ -95,7 +95,20 @@ E.g. to build gcc 5.2.0 with a gcc 6.3.0 the patch to apply is gcc5.2.0_libc_nam
 Building gcc 5.2.0 with gcc 12.2.0 still fails and needs more patches.
 
 ```bash
-$ BINUTILS_VERSION=2.25.1  GCC_VERSION=5.2.0 GCC_APPLY_PATCH=gcc5.2.0_libc_name_p.patch NEWLIB_VERSION=2.2.0.20151023 CHECKSUM_IGNORE=TRUE ./build-toolchain.sh --with-newlib --with-cpu=68000,68060
+$ BINUTILS_VERSION=2.25.1  GCC_VERSION=5.2.0 GCC_APPLY_PATCH=gcc6.4_to_gcc5.2.0.patch NEWLIB_VERSION=2.2.0.20151023 CHECKSUM_IGNORE=TRUE ./build-toolchain.sh --with-newlib --with-cpu=68000,68060
+```
+
+Building gcc 5.2.0 with gcc 12.2.0 still fails and needs more changes to the gcc 5.2 sources.
+There is another patch provided wich allows building gcc 5.2 with a current gcc 12.2.
+This patch fixes:
+
+* libc_name_p definition
+* multiple template definitions in wide-int.h 
+* x_spill_indirect_levels boolean increment which does no longer work with stdc++17 and breaks compiling whith a recent gcc
+
+
+```bash
+$ BINUTILS_VERSION=2.25.1  GCC_VERSION=5.2.0 GCC_APPLY_PATCH=gcc12.2_to_gcc5.2.0.patch NEWLIB_VERSION=2.2.0.20151023 CHECKSUM_IGNORE=TRUE ./build-toolchain.sh --with-newlib --with-cpu=68000,68060
 ```
 
 The version of this script originally forked from https://github.com/kentosama/m68k-elf-gcc which build gcc 6.3.0 can be run with:
