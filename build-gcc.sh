@@ -80,7 +80,7 @@ cd ${BUILD_DIR}/${GCC_DIR}
                                 --disable-shared                    \
                                 --disable-multilib                  \
                                 --disable-libgcj                    \
-                                --disable-libstdcxx                 \
+                                --enable-libstdcxx                  \
                                 --disable-gcov                      \
                                 --without-headers                   \
                                 --without-included-gettext          \
