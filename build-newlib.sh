@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 ###################################################################
 #Script Name    :   build-newlib
@@ -72,9 +72,9 @@ cd ${BUILD_DIR}/${NEWLIB_DIR}
                                 --disable-newlib-supplied-syscalls \
 
 # Build and install newlib
-make -j${NUM_PROC} 2<&1 | tee build.log
+${MAKE} -j${NUM_PROC} 2<&1 | tee build.log
 
 # Install newlib
 if [ $? -eq 0 ]; then
-    make install
+    ${MAKE} install
 fi

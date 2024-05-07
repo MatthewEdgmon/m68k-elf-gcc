@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 ###################################################################
 #Script Name    :   build-binutils
@@ -67,15 +67,15 @@ fi
                                     --disable-multilib \
                                     --enable-libssp \
                                     --enable-lto \
-                                    --enable-languages=c,c++
+                                    --enable-languages=c,c++ \
                                     --program-prefix=${PROGRAM_PREFIX} \
-                                    ${GOD}
+                                    ${GOLD}
 
 
 # build and install binutils
-make -j${NUM_PROC} 2<&1 | tee build.log
+${MAKE} -j${NUM_PROC} 2<&1 | tee build.log
 
 # Install binutils
 if [ $? -eq 0 ]; then
-    make install -j${NUM_PROC}
+    ${MAKE} install -j${NUM_PROC}
 fi
